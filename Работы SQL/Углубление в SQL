@@ -1,0 +1,88 @@
+--=============== МОДУЛЬ 4. УГЛУБЛЕНИЕ В SQL =======================================
+--= ПОМНИТЕ, ЧТО НЕОБХОДИМО УСТАНОВИТЬ ВЕРНОЕ СОЕДИНЕНИЕ И ВЫБРАТЬ СХЕМУ PUBLIC===========
+SET search_path TO public;
+
+--ЗАДАНИЕ №1
+--База данных: если подключение к облачной базе, то создаёте новую схему с префиксом в --виде фамилии, 
+название должно быть на латинице в нижнем регистре и таблицы создаете --в этой новой схеме,
+если подключение к локальному серверу, то создаёте новую схему и --в ней создаёте таблицы.
+
+--Спроектируйте базу данных, содержащую три справочника:
+--· язык (английский, французский и т. п.);
+--· народность (славяне, англосаксы и т. п.);
+--· страны (Россия, Германия и т. п.).
+--Две таблицы со связями: язык-народность и народность-страна, отношения многие ко многим. Пример таблицы со связями — film_actor.
+--Требования к таблицам-справочникам:
+--· наличие ограничений первичных ключей.
+--· идентификатору сущности должен присваиваться автоинкрементом;
+--· наименования сущностей не должны содержать null-значения, не должны допускаться --дубликаты в названиях сущностей.
+--Требования к таблицам со связями:
+--· наличие ограничений первичных и внешних ключей.
+
+--В качестве ответа на задание пришлите запросы создания таблиц и запросы по --добавлению в каждую таблицу по 5 строк с данными.
+ 
+--СОЗДАНИЕ ТАБЛИЦЫ ЯЗЫКИ
+
+create table language (
+language_id serial primary key,
+language_name varchar(50) unique not null,
+create_data timestamp default now()
+)
+
+--ВНЕСЕНИЕ ДАННЫХ В ТАБЛИЦУ ЯЗЫКИ
+
+insert into language (language_name)
+values ('английский'),('датский'),('шведский'),('немецкий'),('французкий')
+
+--СОЗДАНИЕ ТАБЛИЦЫ НАРОДНОСТИ
+
+create table people (
+people_id serial primary key,
+people_name VARCHAR(50) unique not null,
+create_date timestamp default now()
+)
+
+--ВНЕСЕНИЕ ДАННЫХ В ТАБЛИЦУ НАРОДНОСТИ
+
+insert into people (people_name)
+values ('англичане'), ('датчане'), ('шведы'), ('немцы'), ('французы')
+
+--СОЗДАНИЕ ТАБЛИЦЫ СТРАНЫ
+
+create table country(
+country_id serial primary key,
+country_name varchar (100) unique not null
+create_data timestamp default now()
+)
+
+--ВНЕСЕНИЕ ДАННЫХ В ТАБЛИЦУ СТРАНЫ
+
+insert into country (country_name)
+values	('Англия'), ('Дания'), ('Швеция'), ('Германия'), ('Франция')
+
+--СОЗДАНИЕ ПЕРВОЙ ТАБЛИЦЫ СО СВЯЗЯМИ
+
+create table people_country (
+people_id int references people(people_id),
+country_id int references country(country_id),
+primary key (people_id, country_id)
+)
+
+--ВНЕСЕНИЕ ДАННЫХ В ТАБЛИЦУ СО СВЯЗЯМИ
+
+insert into people_country (people_id, country_id)
+values (1, 1), (2, 2), (3, 3), (4, 4), (5, 5)
+
+--СОЗДАНИЕ ВТОРОЙ ТАБЛИЦЫ СО СВЯЗЯМИ
+
+create table language_people (
+people_id int references people(people_id),
+language_id int references language(language_id),
+primary key (people_id, language_id)
+)
+
+--ВНЕСЕНИЕ ДАННЫХ В ТАБЛИЦУ СО СВЯЗЯМИ
+
+insert into language_people (language_id, people_id)
+values (1, 1), (2, 2), (3, 3), (4, 4), (5, 5)
+
